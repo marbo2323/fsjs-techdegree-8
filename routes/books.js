@@ -34,10 +34,11 @@ function getPositiveInteger(value, defaultValue = 0) {
 router.get(
   "/",
   asyncHandler(async (req, res) => {
-    const { q } = req.query;
+    let { q } = req.query;
     let { page } = req.query;
 
     page = getPositiveInteger(page, 1);
+    q = q || "";
     const limit = 10;
     const where = q
       ? {
