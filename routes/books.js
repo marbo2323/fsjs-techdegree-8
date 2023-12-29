@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var Book = require("../models").Book;
+const { Op } = require("sequelize");
 
 /* Handler function to wrap each route. */
 function asyncHandler(cb) {
@@ -21,12 +22,47 @@ function createNotFoundError(message = "Not Found") {
   return error;
 }
 
+/* Convert text to integer. */
+function getPositiveInteger(value, defaultValue = 0) {
+  if (!isNaN(parseInt(value)) && parseInt(value) > 0) {
+    return parseInt(value);
+  }
+  return defaultValue;
+}
+
 /* GET full list of books. */
 router.get(
   "/",
   asyncHandler(async (req, res) => {
-    const books = await Book.findAll();
-    res.render("books/index", { books, title: "Book List" });
+    const { q } = req.query;
+    let { page } = req.query;
+
+    page = getPositiveInteger(page, 1);
+    const limit = 10;
+    const where = q
+      ? {
+          [Op.or]: [
+            { title: { [Op.like]: `%${q}%` } },
+            { author: { [Op.like]: `%${q}%` } },
+            { genre: { [Op.like]: `%${q}%` } },
+            { year: { [Op.like]: `%${q}%` } },
+          ],
+        }
+      : {};
+    const bookCount = await Book.count({ where });
+    let offset = 0;
+    let pages = 1;
+    if (bookCount > limit) {
+      pages = Math.ceil(bookCount / limit);
+      if (page > 1) {
+        offset = page * limit - limit;
+      }
+    }
+
+    const options = { limit, offset };
+    options.where = where;
+    const books = await Book.findAll(options);
+    res.render("books/index", { books, title: "Book List", q, page, pages });
   })
 );
 

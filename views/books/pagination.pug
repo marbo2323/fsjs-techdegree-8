@@ -1,0 +1,7 @@
+if pages > 1
+  - var prevPage = page > 1 ? page -1: page;
+  - var nextPage = page < pages ? page + 1: page;
+  p
+    a.button(href=`?q=${q}&page=${prevPage}`) &lt;&lt; Prev
+    span(class="mh-1") #{page} of #{pages} 
+    a.button(href=`?q=${q}&page=${nextPage}`) Next &gt;&gt; 

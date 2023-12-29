@@ -2,8 +2,13 @@ extends ../layout
 
 block content
   h1 Books
+  form(method="get")
+    input(type="text" name="q")
+    input(type="button" value="Search" onclick="this.form.submit()")
   p
     a.button(href="/books/new") Create New Book
+
+  include pagination  
   table
     thead
       tr

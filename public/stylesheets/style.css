@@ -95,3 +95,8 @@ input[type=text] {
 .error {
   color: rgb(236, 15, 15);
 }
+
+.mh-1{
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
