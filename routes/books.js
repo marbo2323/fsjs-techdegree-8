@@ -60,8 +60,7 @@ router.get(
       }
     }
 
-    const options = { limit, offset };
-    options.where = where;
+    const options = { limit, offset, where };
     const books = await Book.findAll(options);
     res.render("books/index", { books, title: "Book List", q, page, pages });
   })
